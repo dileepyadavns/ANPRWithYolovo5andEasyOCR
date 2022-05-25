@@ -2,8 +2,6 @@
 #importing required libraries
 import torch
 import cv2
-import time
-import re
 import numpy as np
 import easyocr
 import psycopg2 #pip install psycopg2 
@@ -25,11 +23,7 @@ def detectx (frame, model):
     frame = [frame]
     print(f"[INFO] Detecting. . . ")
     results = model(frame)
-    # results.show()
-    # print( results.xyxyn[0])
-    # print(results.xyxyn[0][:, -1])
-    # print(results.xyxyn[0][:, :-1])
-
+    print(results)
     labels, cordinates = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
 
     return labels, cordinates
@@ -109,7 +103,7 @@ def filter_text(region, ocr_result, region_threshold):
 def main(vid_path=None,vid_out = None):
     print(f"[INFO] Loading model... ")
     ## loading the custom trained model
-    model =  torch.hub.load('/home/neosoft/Downloads/numberplaterecognition-main/yolov5', 'custom', source ='local', path='/home/neosoft/Downloads/numberplaterecognition-main/best2.pt') ### The repo is stored locally
+    model =  torch.hub.load('/home/neosoft/Downloads/numberplaterecognition-main/yolov5', 'custom', source ='local', path='best2.pt') ### The repo is stored locally
 
     classes = model.names ### class names in string format
     
@@ -166,13 +160,14 @@ def main(vid_path=None,vid_out = None):
                 break
 
  #calling fuction
-main(vid_path="dileep_ocr_video.mp4",vid_out="vid_1.mp4") ### for custom video
+main(vid_path="skodacrop.mp4",vid_out="vid_1.mp4") ### for custom video
 # main(vid_path=0,vid_out="webcam_facemask_result.mp4") #### for webcam
-print(plates)
+print("list of all number plates extracted from each frame"+ str(plates))
 
-result = list(filter(lambda x: x==str(x),plates))
-most_common = max(result, key = result.count)
-print(most_common)
+result = list(filter(lambda x: x==str(x),plates)) #filtered empty item from all extractions
+
+most_common = max(result, key = result.count) #most extracted number plate
+print("Number plate extracted of car from the video: "+ str(most_common))
 
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 s = "SELECT * FROM cars where vehicleNo =%s"
@@ -180,6 +175,6 @@ s = "SELECT * FROM cars where vehicleNo =%s"
 cur.execute(s, (most_common,))
 res = cur.fetchall()
 if len(res)>=1:
-    print("Car has granted permission")
+    print("Output after checking in database: "+"Car {} has granted permission".format(most_common))
 else: 
-    print("Car has not granted permission")    
+    print("Output after checking in database:  "+"Car {} not granted permission".format(most_common) )    
