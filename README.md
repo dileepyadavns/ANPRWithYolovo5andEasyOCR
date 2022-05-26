@@ -4,6 +4,10 @@
 # Objective:
 To ensure that the access must be given to the users who have registered their car's number plate in the system.
 
+# Flow Chart
+<img src="floweasyocr.png">
+
+
 # 1. DATA COLLECTION:
 Downloaded high quality car images with clear and visible number plate
 And cleaned if there is any image which is not clear and splitted the images to Train and 
