@@ -103,7 +103,7 @@ def filter_text(region, ocr_result, region_threshold):
 def main(vid_path=None,vid_out = None):
     print(f"[INFO] Loading model... ")
     ## loading the custom trained model
-    model =  torch.hub.load('/home/neosoft/Downloads/numberplaterecognition-main/yolov5', 'custom', source ='local', path='best2.pt') ### The repo is stored locally
+    model =  torch.hub.load('/home/neosoft/Downloads/numberplaterecognition-main/yolov5', 'custom', source ='local', path='bestvm.pt') ### The repo is stored locally
 
     classes = model.names ### class names in string format
     
@@ -160,8 +160,10 @@ def main(vid_path=None,vid_out = None):
                 break
 
  #calling fuction
-main(vid_path="skodacrop.mp4",vid_out="vid_1.mp4") ### for custom video
-# main(vid_path=0,vid_out="webcam_facemask_result.mp4") #### for webcam
+#main(vid_path="ford.mp4",vid_out="vid_1.mp4") ### for custom video
+
+
+main(vid_path=0,vid_out="webcam_facemask_result.mp4") #### for webcam
 print("list of all number plates extracted from each frame"+ str(plates))
 
 result = list(filter(lambda x: x==str(x),plates)) #filtered empty item from all extractions
